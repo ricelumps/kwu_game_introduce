@@ -1,33 +1,111 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class RunningGamePlayerController : MonoBehaviour
 {
-    [Header("Jump Settings")]
+    [Header("Jump")]
     [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private float jumpHoldForce = 18f;
+    [SerializeField] private float maxJumpHoldTime = 0.2f;
+    [SerializeField] private float maxRiseSpeed = 13f;
+
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.15f;
+    [SerializeField] private LayerMask groundLayer;
+
+    [Header("Input Forgiveness")]
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
 
     private Rigidbody2D rb;
-    private bool isGrounded = false;
+    private Animator animator;
+
     private bool canControl = true;
+    private bool isGrounded;
+    private bool isJumpHolding;
+
+    private float coyoteTimer;
+    private float jumpBufferTimer;
+    private float jumpHoldTimer;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
     {
-
-        if (!canControl)
+        if (!CanPlay())
         {
             return;
+        }
+
+        CheckGround();
+        ReadJumpInput();
+        UpdateAnimation();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!CanPlay())
+        {
+            return;
+        }
+
+        ApplyJumpHold();
+    }
+
+    private bool CanPlay()
+    {
+        if (!canControl)
+        {
+            return false;
         }
 
         if (GameManager.Instance != null && !GameManager.Instance.IsPlaying())
         {
-            return;
+            return false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        return true;
+    }
+
+    private void CheckGround()
+    {
+        isGrounded = Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayer
+        );
+
+        if (isGrounded)
+        {
+            coyoteTimer = coyoteTime;
+        }
+        else
+        {
+            coyoteTimer -= Time.deltaTime;
+        }
+    }
+
+    private void ReadJumpInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            jumpBufferTimer = jumpBufferTime;
+        }
+        else
+        {
+            jumpBufferTimer -= Time.deltaTime;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isJumpHolding = false;
+        }
+
+        if (jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
             Jump();
         }
@@ -35,45 +113,61 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        // 기존 y 속도를 0으로 만들고 위쪽 힘을 줍니다.
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 
-        isGrounded = false;
+        isJumpHolding = true;
+        jumpHoldTimer = maxJumpHoldTime;
+
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
+
+ //       if (AudioManager.Instance != null)
+ //      {
+ //           AudioManager.Instance.PlayJumpSound();
+ //       }
+    }
+
+    private void ApplyJumpHold()
+    {
+        if (!isJumpHolding)
+        {
+            return;
+        }
+
+        if (!Input.GetKey(KeyCode.Space))
+        {
+            isJumpHolding = false;
+            return;
+        }
+
+        if (jumpHoldTimer <= 0f)
+        {
+            isJumpHolding = false;
+            return;
+        }
+
+        if (rb.linearVelocity.y < maxRiseSpeed)
+        {
+            rb.AddForce(Vector2.up * jumpHoldForce, ForceMode2D.Force);
+        }
+
+        jumpHoldTimer -= Time.fixedDeltaTime;
+    }
+
+    private void UpdateAnimation()
+    {
+        if (animator == null)
+        {
+            return;
+        }
 
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("충돌 발생: " + collision.gameObject.name + " / Tag: " + collision.gameObject.tag);
-
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = true;
-        }
-
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            Debug.Log("장애물 충돌 감지");
-
-            canControl = false;
-
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.GameOver();
-            }
-            else
-            {
-                Debug.LogWarning("GameManager.Instance가 없습니다.");
-            }
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
+            Die();
         }
     }
 
@@ -81,17 +175,34 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
-            canControl = false;
-
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.GameOver();
-            }
+            Die();
         }
     }
 
-    public void ResetControl()
+    private void Die()
     {
-        canControl = true;
+        canControl = false;
+        isJumpHolding = false;
+
+        if (animator != null)
+        {
+            animator.speed = 0f;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 }

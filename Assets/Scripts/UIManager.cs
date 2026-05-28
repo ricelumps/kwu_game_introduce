@@ -41,12 +41,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateScoreText()
     {
-        scoreText.text = "Score : " + ScoreManager.Instance.GetCurrentScore();
+        scoreText.text = "Dist : " + ScoreManager.Instance.GetCurrentScore();
     }
 
     public void UpdateHighScoreText()
     {
-        highScoreText.text = "High Score : " + ScoreManager.Instance.GetHighScore();
+        highScoreText.text = "Highest Dist : " + ScoreManager.Instance.GetHighScore();
     }
 
     public void UpdateSpeedText()
@@ -60,7 +60,7 @@ public class UIManager : MonoBehaviour
 
         if (ScoreManager.Instance != null)
         {
-            finalScoreText.text = "Final Score : " + ScoreManager.Instance.GetCurrentScore();
+            finalScoreText.text = "Final Dist : " + ScoreManager.Instance.GetCurrentScore();
         }
     }
 

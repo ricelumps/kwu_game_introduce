@@ -3,9 +3,9 @@ using UnityEngine;
 public class BackgroundLooper : MonoBehaviour
 {
     [SerializeField] private Transform[] backgroundTiles;
-    [SerializeField] private float tileWidth = 18f;
-    [SerializeField] private float leftLimitX = -18f;
-    [SerializeField] private float speedMultiplier = 0.3f;
+    [SerializeField] private float tileWidth = 25f;
+    [SerializeField] private float leftLimitX = -25f;
+    [SerializeField] private float speedMultiplier = 0.5f;
 
     private void Update()
     {

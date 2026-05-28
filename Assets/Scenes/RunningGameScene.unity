@@ -315,9 +315,9 @@ GameObject:
   m_Component:
   - component: {fileID: 119767183}
   - component: {fileID: 119767182}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -414,7 +414,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'High Score : 0
+  m_text: 'Highest Dist : 0
 
 '
   m_isRightToLeft: 0
@@ -540,8 +540,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd95101239e55dc4cba42c0a2b5191ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  baseScorePerSecond: 10
-  speedScoreMultiplier: 1
+  baseScorePerSecond: 0.5
+  speedScoreMultiplier: 0.75
 --- !u!1 &274463561
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,8 +587,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeedManager
   startSpeed: 6
-  speedIncreasePerSecond: 0.1
-  maxSpeed: 15
+  speedIncreasePerSecond: 0.2
+  maxSpeed: 20
 --- !u!1 &296138243
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,7 +646,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Score : 0'
+  m_text: 'Dist : 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -751,11 +751,12 @@ Transform:
   m_GameObject: {fileID: 381059422}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.00061, y: -0.95, z: 0}
+  m_LocalPosition: {x: -2, y: -0.95, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 391670771}
+  - {fileID: 501424414}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &391670770
@@ -768,7 +769,7 @@ GameObject:
   m_Component:
   - component: {fileID: 391670771}
   m_Layer: 0
-  m_Name: ObstacleSpawnPoint
+  m_Name: GroundObstacleSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -879,7 +880,7 @@ GameObject:
   - component: {fileID: 441610084}
   - component: {fileID: 441610083}
   - component: {fileID: 441610082}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundTile_2
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1097,6 +1098,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &501424413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 501424414}
+  m_Layer: 0
+  m_Name: AirObstacleSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &501424414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501424413}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 381059423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &542427648
 GameObject:
   m_ObjectHideFlags: 0
@@ -1460,6 +1492,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578473741}
   m_CullTransparentMesh: 1
+--- !u!1 &715590729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 715590730}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &715590730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715590729}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.25, y: -3.488, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2034068016}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &739022387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1563,7 +1626,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 'Speed : 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2302,11 +2365,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd12949cfc381d14aaf23f2b347c1b3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleSpawner
-  obstaclePrefabs:
-  - {fileID: 8914201278399923897, guid: c6b8ec3b5571ae2469098082048e0e7b, type: 3}
+  groundObstaclePrefabs:
   - {fileID: 6066108674619756130, guid: a672b4006345b3440b0786b73d213e97, type: 3}
+  - {fileID: 8914201278399923897, guid: c6b8ec3b5571ae2469098082048e0e7b, type: 3}
   - {fileID: 704431348909957411, guid: 5c6dac60cb8753e46883be93c203c9c5, type: 3}
-  spawnPoint: {fileID: 391670771}
+  groundSpawnPoint: {fileID: 391670771}
+  airObstaclePrefabs:
+  - {fileID: 6066108674619756130, guid: 3bb12b57a8c466e409bc04d6a62dd225, type: 3}
+  - {fileID: 8914201278399923897, guid: 2226fe37c905ad84dab4250df4187a6f, type: 3}
+  airSpawnPoint: {fileID: 501424414}
+  airObstacleChance: 0.2
 --- !u!1 &1830307665
 GameObject:
   m_ObjectHideFlags: 0
@@ -2370,7 +2438,7 @@ GameObject:
   - component: {fileID: 1921666744}
   - component: {fileID: 1921666743}
   - component: {fileID: 1921666745}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundTile_1
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -2716,9 +2784,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!4 &2034068016
 Transform:
@@ -2729,10 +2797,11 @@ Transform:
   m_GameObject: {fileID: 2034068014}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.08, y: -0.95, z: 0}
+  m_LocalPosition: {x: -6, y: -0.95, z: 0}
   m_LocalScale: {x: -0.37400463, y: 0.37400463, z: 0.37400463}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 715590730}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2034068017
@@ -2852,7 +2921,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5caa452d82ee3fe4c8d423a4965e3a4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunningGamePlayerController
-  jumpForce: 12
+  jumpForce: 10
+  jumpHoldForce: 18
+  maxJumpHoldTime: 0.2
+  maxRiseSpeed: 13
+  groundCheck: {fileID: 715590730}
+  groundCheckRadius: 0.15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  coyoteTime: 0.1
+  jumpBufferTime: 0.1
 --- !u!95 &2034068020
 Animator:
   serializedVersion: 7
@@ -2932,7 +3011,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Final Score : 0'
+  m_text: 'Final Dist : 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3018,10 +3097,10 @@ SceneRoots:
   m_Roots:
   - {fileID: 17891179}
   - {fileID: 1149165112}
+  - {fileID: 393340023}
   - {fileID: 1231063890}
   - {fileID: 381059423}
   - {fileID: 2034068016}
   - {fileID: 1254907010}
-  - {fileID: 393340023}
   - {fileID: 1830307667}
   - {fileID: 119767183}

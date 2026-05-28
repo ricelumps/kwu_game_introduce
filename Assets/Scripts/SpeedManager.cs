@@ -5,9 +5,9 @@ public class SpeedManager : MonoBehaviour
     public static SpeedManager Instance { get; private set; }
 
     [Header("Speed Settings")]
-    [SerializeField] private float startSpeed = 5f;
-    [SerializeField] private float speedIncreasePerSecond = 0.05f;
-    [SerializeField] private float maxSpeed = 15f;
+    [SerializeField] private float startSpeed = 6f;
+    [SerializeField] private float speedIncreasePerSecond = 0.2f;
+    [SerializeField] private float maxSpeed = 20f;
 
     private float currentSpeed;
 

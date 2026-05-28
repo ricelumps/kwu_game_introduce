@@ -3,8 +3,14 @@ using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject[] obstaclePrefabs;
-    [SerializeField] private Transform spawnPoint;
+    [Header("Ground Obstacles")]
+    [SerializeField] private GameObject[] groundObstaclePrefabs;
+    [SerializeField] private Transform groundSpawnPoint;
+
+    [Header("Air Obstacles")]
+    [SerializeField] private GameObject[] airObstaclePrefabs;
+    [SerializeField] private Transform airSpawnPoint;
+    [SerializeField] private float airObstacleChance = 0.3f;
 
     private Coroutine spawnRoutine;
 
@@ -39,18 +45,38 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void SpawnObstacle()
     {
-        if (obstaclePrefabs.Length == 0 || spawnPoint == null)
+        bool canSpawnAir = airObstaclePrefabs != null && airObstaclePrefabs.Length > 0 && airSpawnPoint != null;
+        bool shouldSpawnAir = canSpawnAir && Random.value < airObstacleChance;
+
+        if (shouldSpawnAir)
         {
-            Debug.LogWarning("ObstacleSpawner 설정이 비어 있습니다.");
+            SpawnFromArray(airObstaclePrefabs, airSpawnPoint);
+        }
+        else
+        {
+            SpawnFromArray(groundObstaclePrefabs, groundSpawnPoint);
+        }
+    }
+
+    private void SpawnFromArray(GameObject[] prefabs, Transform spawnPoint)
+    {
+        if (prefabs == null || prefabs.Length == 0 || spawnPoint == null)
+        {
+            Debug.LogWarning("장애물 Prefab 또는 SpawnPoint가 비어 있습니다.");
             return;
         }
 
-        int index = Random.Range(0, obstaclePrefabs.Length);
-        Instantiate(obstaclePrefabs[index], spawnPoint.position, Quaternion.identity);
+        int index = Random.Range(0, prefabs.Length);
+        Instantiate(prefabs[index], spawnPoint.position, Quaternion.identity);
     }
 
     private float GetSpawnInterval()
     {
+        if (SpeedManager.Instance == null)
+        {
+            return Random.Range(2.0f, 3.0f);
+        }
+
         float speed = SpeedManager.Instance.GetCurrentSpeed();
 
         if (speed < 7f)
@@ -70,9 +96,19 @@ public class ObstacleSpawner : MonoBehaviour
 
         if (speed < 13f)
         {
-            return Random.Range(1.0f, 1.6f);
+            return Random.Range(1.0f, 1.7f);
         }
 
-        return Random.Range(0.8f, 1.4f);
+        if (speed < 16f)
+        {
+            return Random.Range(0.8f, 1.3f);
+        }
+        if (speed < 20f)
+        {
+            return Random.Range(0.7f, 1.0f);
+        }
+
+
+        return Random.Range(0.6f, 0.8f);
     }
 }

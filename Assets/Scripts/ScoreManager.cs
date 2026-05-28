@@ -5,8 +5,8 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
 
     [Header("Score Settings")]
-    [SerializeField] private float baseScorePerSecond = 10f;
-    [SerializeField] private float speedScoreMultiplier = 1f;
+    [SerializeField] private float baseScorePerSecond = 0.5f;
+    [SerializeField] private float speedScoreMultiplier = 0.75f;
 
     private float currentScore;
     private int highScore;
