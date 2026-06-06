@@ -3,42 +3,78 @@ using UnityEngine;
 public class BackgroundLooper : MonoBehaviour
 {
     [SerializeField] private Transform[] backgroundTiles;
-    [SerializeField] private float tileWidth = 25f;
-    [SerializeField] private float leftLimitX = -25f;
-    [SerializeField] private float speedMultiplier = 0.5f;
+    [SerializeField] private float speedMultiplier = 0.3f;
+
+    private float tileWidth;
+    private float cameraLeftX;
+
+    private void Start()
+    {
+        SpriteRenderer renderer =
+            backgroundTiles[0].GetComponent<SpriteRenderer>();
+
+        tileWidth = renderer.bounds.size.x;
+
+        float cameraHalfWidth =
+            Camera.main.orthographicSize * Camera.main.aspect;
+
+        cameraLeftX =
+            Camera.main.transform.position.x - cameraHalfWidth;
+
+        // 두 번째 배경을 첫 번째 배경 바로 오른쪽에 배치합니다.
+        backgroundTiles[1].position = new Vector3(
+            backgroundTiles[0].position.x + tileWidth,
+            backgroundTiles[0].position.y,
+            backgroundTiles[0].position.z
+        );
+    }
 
     private void Update()
     {
-        if (GameManager.Instance != null && !GameManager.Instance.IsPlaying())
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.IsPlaying())
         {
             return;
         }
 
-        float speed = SpeedManager.Instance.GetCurrentSpeed() * speedMultiplier;
-
-        for (int i = 0; i < backgroundTiles.Length; i++)
+        if (SpeedManager.Instance == null)
         {
-            backgroundTiles[i].position += Vector3.left * speed * Time.deltaTime;
+            return;
+        }
 
-            if (backgroundTiles[i].position.x <= leftLimitX)
+        float speed =
+            SpeedManager.Instance.GetCurrentSpeed() * speedMultiplier;
+
+        foreach (Transform tile in backgroundTiles)
+        {
+            tile.position += Vector3.left * speed * Time.deltaTime;
+
+            float tileRightX = tile.position.x + tileWidth * 0.5f;
+
+            // 배경의 오른쪽 끝까지 카메라 밖으로 나가면 재배치합니다.
+            if (tileRightX < cameraLeftX)
             {
-                MoveTileToRight(backgroundTiles[i]);
+                MoveToRight(tile);
             }
         }
     }
 
-    private void MoveTileToRight(Transform tile)
+    private void MoveToRight(Transform tile)
     {
         float rightMostX = backgroundTiles[0].position.x;
 
-        for (int i = 1; i < backgroundTiles.Length; i++)
+        foreach (Transform otherTile in backgroundTiles)
         {
-            if (backgroundTiles[i].position.x > rightMostX)
+            if (otherTile.position.x > rightMostX)
             {
-                rightMostX = backgroundTiles[i].position.x;
+                rightMostX = otherTile.position.x;
             }
         }
 
-        tile.position = new Vector3(rightMostX + tileWidth, tile.position.y, tile.position.z);
+        tile.position = new Vector3(
+            rightMostX + tileWidth,
+            tile.position.y,
+            tile.position.z
+        );
     }
 }
