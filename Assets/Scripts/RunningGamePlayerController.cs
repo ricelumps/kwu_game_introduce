@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class RunningGamePlayerController : MonoBehaviour
 {
@@ -91,7 +92,16 @@ public class RunningGamePlayerController : MonoBehaviour
 
     private void ReadJumpInput()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        Keyboard keyboard = Keyboard.current;
+
+        if (keyboard == null)
+        {
+            jumpBufferTimer -= Time.deltaTime;
+            isJumpHolding = false;
+            return;
+        }
+
+        if (keyboard.spaceKey.wasPressedThisFrame)
         {
             jumpBufferTimer = jumpBufferTime;
         }
@@ -100,7 +110,7 @@ public class RunningGamePlayerController : MonoBehaviour
             jumpBufferTimer -= Time.deltaTime;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (keyboard.spaceKey.wasReleasedThisFrame)
         {
             isJumpHolding = false;
         }
@@ -134,7 +144,7 @@ public class RunningGamePlayerController : MonoBehaviour
             return;
         }
 
-        if (!Input.GetKey(KeyCode.Space))
+        if (Keyboard.current == null || !Keyboard.current.spaceKey.isPressed)
         {
             isJumpHolding = false;
             return;

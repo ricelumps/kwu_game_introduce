@@ -1,8 +1,5 @@
 using UnityEngine;
-
-#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
-#endif
 
 public class CatchGamePlayerController : MonoBehaviour
 {
@@ -28,16 +25,12 @@ public class CatchGamePlayerController : MonoBehaviour
 
         Vector3 mouseScreenPosition;
 
-#if ENABLE_INPUT_SYSTEM
         if (Mouse.current == null)
         {
             return;
         }
 
         mouseScreenPosition = Mouse.current.position.ReadValue();
-#else
-        mouseScreenPosition = Input.mousePosition;
-#endif
 
         mouseScreenPosition.z = Mathf.Abs(mainCamera.transform.position.z);
 
