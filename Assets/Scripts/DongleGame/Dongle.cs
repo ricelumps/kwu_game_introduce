@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Dongle : MonoBehaviour
 {
@@ -23,9 +24,19 @@ public class Dongle : MonoBehaviour
     {
         if (isDrag)
         {
+            if (Mouse.current == null)
+            {
+                return;
+            }
+
             Vector2 localPos;
 
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, null, out localPos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.transform as RectTransform,
+                Mouse.current.position.ReadValue(),
+                null,
+                out localPos
+            );
 
             // 캔버스 절반 너비
             float canvasHalfWidth = ((canvas.transform as RectTransform).rect.width / 2f) - 50;
