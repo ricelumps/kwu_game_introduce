@@ -20,6 +20,7 @@ public class RunningGamePlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
     private Animator animator;
+    private RigidbodyConstraints2D initialConstraints;
 
     private bool canControl = true;
     private bool isGrounded;
@@ -33,10 +34,51 @@ public class RunningGamePlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        initialConstraints = rb.constraints;
     }
+
+    public void ResetPlayer()
+    {
+        canControl = true;
+        isDying = false;
+        isJumpHolding = false;
+        isGrounded = false;
+
+        coyoteTimer = 0f;
+        jumpBufferTimer = 0f;
+        jumpHoldTimer = 0f;
+
+        rb.constraints = initialConstraints;
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = true;
+
+        Collider2D playerCollider = GetComponent<Collider2D>();
+
+        if (playerCollider != null)
+        {
+            playerCollider.enabled = true;
+        }
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+            animator.ResetTrigger("Die");
+        }
+    }
+
 
     private void Update()
     {
+        if (Keyboard.current != null &&
+            Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Debug.Log(
+                $"Space 입력 / canControl: {canControl} / " +
+                $"Playing: {GameManager.Instance?.IsPlaying()}"
+            );
+        }
+
         if (!CanPlay())
         {
             return;
@@ -190,16 +232,49 @@ public class RunningGamePlayerController : MonoBehaviour
         }
     }
 
+    private bool isDying;
+
     private void Die()
     {
+        if (isDying)
+        {
+            return;
+        }
+
+        isDying = true;
         canControl = false;
         isJumpHolding = false;
 
-        if (animator != null)
+        // 충돌 후 캐릭터의 물리 이동을 멈춥니다.
+        rb.linearVelocity = Vector2.zero;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+
+        Collider2D playerCollider = GetComponent<Collider2D>();
+
+        if (playerCollider != null)
         {
-            animator.speed = 0f;
+            playerCollider.enabled = false;
         }
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.BeginDeathSequence();
+        }
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+        else
+        {
+            // Animator가 없다면 즉시 게임 오버 처리
+            OnDeathAnimationFinished();
+        }
+    }
+
+
+    public void OnDeathAnimationFinished()
+    {
         if (GameManager.Instance != null)
         {
             GameManager.Instance.GameOver();

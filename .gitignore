@@ -38,6 +38,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -93,3 +94,7 @@ Assets/StreamingAssets/google-services-desktop*
 Assets/Pixyz/*
 Assets/Keys*
 ProjectSettings/Packages/com.unity.industry.toolkit/*
+
+# Unity crash/recovery scenes
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta

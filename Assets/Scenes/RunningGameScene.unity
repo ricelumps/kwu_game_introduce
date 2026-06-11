@@ -660,7 +660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpeedManager
   startSpeed: 6
   speedIncreasePerSecond: 0.2
-  maxSpeed: 20
+  maxSpeed: 18
 --- !u!1 &296138243
 GameObject:
   m_ObjectHideFlags: 0
@@ -2299,12 +2299,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleSpawner
   groundSpawnPoint: {fileID: 391670771}
   airSpawnPoint: {fileID: 501424414}
-  phase1Obstacles: []
+  phase1Obstacles:
+  - prefab: {fileID: 704431348909957411, guid: 79ad0a5a02537e640a328fee1405b9fa, type: 3}
+    spawnInAir: 1
+  - prefab: {fileID: 704431348909957411, guid: bba6c872e4abe8e41a8af845744878ff, type: 3}
+    spawnInAir: 0
+  - prefab: {fileID: 704431348909957411, guid: 2a1fb25449f6c6446aed093e1cc44362, type: 3}
+    spawnInAir: 1
   phase2Obstacles:
   - prefab: {fileID: 6066108674619756130, guid: a672b4006345b3440b0786b73d213e97, type: 3}
     spawnInAir: 1
   - prefab: {fileID: 8914201278399923897, guid: 2226fe37c905ad84dab4250df4187a6f, type: 3}
     spawnInAir: 1
+  - prefab: {fileID: 704431348909957411, guid: c6674c9a7c4300c49831fbae65d0a121, type: 3}
+    spawnInAir: 0
   phase3Obstacles:
   - prefab: {fileID: 8914201278399923897, guid: c6b8ec3b5571ae2469098082048e0e7b, type: 3}
     spawnInAir: 1
@@ -2317,6 +2325,7 @@ MonoBehaviour:
     spawnInAir: 0
   - prefab: {fileID: 6066108674619756130, guid: 30bcbc053b592e04180a109c2e2ab498, type: 3}
     spawnInAir: 1
+  groundObstacleChance: 0.7
 --- !u!1 &1830307665
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ public enum GameState
 {
     Ready,
     Playing,
+    Dying,
     GameOver
 }
 
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
     {
         currentState = GameState.Playing;
 
+        Time.timeScale = 1.0f;
+
         ScoreManager.Instance.ResetScore();
         SpeedManager.Instance.ResetSpeed();
 
@@ -41,21 +44,31 @@ public class GameManager : MonoBehaviour
         obstacleSpawner.StartSpawning();
     }
 
+
+    public void BeginDeathSequence()
+    {
+        if (currentState != GameState.Playing)
+        {
+            return;
+        }
+
+        currentState = GameState.Dying;
+
+        if (obstacleSpawner != null)
+        {
+            obstacleSpawner.StopSpawning();
+        }
+
+    }
+
     public void GameOver()
     {
-        Debug.Log("GameManager.GameOver 호출됨");
-
         if (currentState == GameState.GameOver)
         {
             return;
         }
 
         currentState = GameState.GameOver;
-
-        if (obstacleSpawner != null)
-        {
-            obstacleSpawner.StopSpawning();
-        }
 
         if (ScoreManager.Instance != null)
         {
@@ -66,12 +79,6 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.ShowGameOver();
         }
-        else
-        {
-            Debug.LogWarning("UIManager.Instance가 없습니다.");
-        }
-
-        Debug.Log("게임 오버");
     }
 
     public void RestartGame()
