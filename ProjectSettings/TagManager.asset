@@ -5,11 +5,13 @@ TagManager:
   serializedVersion: 3
   tags:
   - Dongle
+  - Obstacle
+  - Ground
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 

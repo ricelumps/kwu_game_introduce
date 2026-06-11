@@ -28,6 +28,10 @@ public class ObstacleSpawner : MonoBehaviour
     [Header("50 ~ 60 Seconds")]
     [SerializeField] private ObstacleEntry[] phase4Obstacles;
 
+    [Header("Spawn Chance")]
+    [Range(0f, 1f)]
+    [SerializeField] private float groundObstacleChance = 0.7f;
+
     private Coroutine spawnCoroutine;
     private float elapsedTime;
 
@@ -73,6 +77,49 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
+
+    private ObstacleEntry GetRandomObstacleByLocation(
+    ObstacleEntry[] obstacles,
+    bool spawnInAir)
+    {
+        int matchingCount = 0;
+
+        // 원하는 위치와 일치하는 장애물 개수를 확인합니다.
+        for (int i = 0; i < obstacles.Length; i++)
+        {
+            if (obstacles[i] != null &&
+                obstacles[i].prefab != null &&
+                obstacles[i].spawnInAir == spawnInAir)
+            {
+                matchingCount++;
+            }
+        }
+
+        if (matchingCount == 0)
+        {
+            return null;
+        }
+
+        int randomIndex = Random.Range(0, matchingCount);
+
+        for (int i = 0; i < obstacles.Length; i++)
+        {
+            if (obstacles[i] != null &&
+                obstacles[i].prefab != null &&
+                obstacles[i].spawnInAir == spawnInAir)
+            {
+                if (randomIndex == 0)
+                {
+                    return obstacles[i];
+                }
+
+                randomIndex--;
+            }
+        }
+
+        return null;
+    }
+
     private void SpawnObstacle()
     {
         ObstacleEntry[] currentObstacles = GetCurrentObstacles();
@@ -82,15 +129,28 @@ public class ObstacleSpawner : MonoBehaviour
             Debug.LogWarning(
                 $"{elapsedTime:F1}초 구간의 장애물이 설정되지 않았습니다."
             );
+
             return;
         }
 
-        ObstacleEntry selected =
-            currentObstacles[Random.Range(0, currentObstacles.Length)];
+        // 먼저 지상 또는 공중 장애물 중 무엇을 생성할지 결정합니다.
+        bool spawnInAir = Random.value >= groundObstacleChance;
 
-        if (selected.prefab == null)
+        ObstacleEntry selected =
+            GetRandomObstacleByLocation(currentObstacles, spawnInAir);
+
+        // 선택한 종류가 현재 Phase에 없다면 반대 종류를 선택합니다.
+        if (selected == null)
         {
-            Debug.LogWarning("Obstacle Prefab이 연결되지 않았습니다.");
+            selected = GetRandomObstacleByLocation(
+                currentObstacles,
+                !spawnInAir
+            );
+        }
+
+        if (selected == null || selected.prefab == null)
+        {
+            Debug.LogWarning("생성 가능한 장애물 Prefab이 없습니다.");
             return;
         }
 
@@ -99,7 +159,7 @@ public class ObstacleSpawner : MonoBehaviour
 
         if (spawnPoint == null)
         {
-            Debug.LogWarning("Obstacle SpawnPoint가 연결되지 않았습니다.");
+            Debug.LogWarning("장애물 SpawnPoint가 연결되지 않았습니다.");
             return;
         }
 
@@ -109,8 +169,10 @@ public class ObstacleSpawner : MonoBehaviour
             Quaternion.identity
         );
 
+        string location = selected.spawnInAir ? "공중" : "지상";
+
         Debug.Log(
-            $"{elapsedTime:F1}초: {selected.prefab.name} 생성"
+            $"{elapsedTime:F1}초: {selected.prefab.name} ({location}) 생성"
         );
     }
 
