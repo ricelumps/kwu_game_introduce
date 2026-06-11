@@ -17,8 +17,8 @@ public class CatchGamePlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (CatchGameManager.Instance != null &&
-            CatchGameManager.Instance.IsGameOver)
+        if (CatchGameManager.Instance == null ||
+            !CatchGameManager.Instance.IsPlaying())
         {
             return;
         }

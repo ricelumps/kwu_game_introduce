@@ -19,29 +19,40 @@ public class CatchObjectSpawner : MonoBehaviour
 
     private Coroutine spawnRoutine;
 
-    private void Start()
+    public void StartSpawning()
     {
+        StopSpawning();
         spawnRoutine = StartCoroutine(SpawnRoutine());
+    }
+
+    public void StopSpawning()
+    {
+        if (spawnRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(spawnRoutine);
+        spawnRoutine = null;
     }
 
     private IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            if (CatchGameManager.Instance != null &&
-                !CatchGameManager.Instance.IsGameOver)
-            {
-                SpawnRandomObject();
-
-                float interval =
-                    CatchGameManager.Instance.GetSpawnInterval();
-
-                yield return new WaitForSeconds(interval);
-            }
-            else
+            if (CatchGameManager.Instance == null ||
+                !CatchGameManager.Instance.IsPlaying())
             {
                 yield return null;
+                continue;
             }
+
+            SpawnRandomObject();
+
+            float interval =
+                CatchGameManager.Instance.GetSpawnInterval();
+
+            yield return new WaitForSeconds(interval);
         }
     }
 
@@ -79,7 +90,6 @@ public class CatchObjectSpawner : MonoBehaviour
             return null;
         }
 
-        int randomIndex = Random.Range(0, prefabs.Length);
-        return prefabs[randomIndex];
+        return prefabs[Random.Range(0, prefabs.Length)];
     }
 }

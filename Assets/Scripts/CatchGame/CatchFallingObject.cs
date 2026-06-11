@@ -13,12 +13,12 @@ public class CatchFallingObject : MonoBehaviour
 
     private void Update()
     {
-        if (isHandled ||
-            CatchGameManager.Instance == null ||
-            CatchGameManager.Instance.IsGameOver)
+        if (CatchGameManager.Instance == null ||
+            !CatchGameManager.Instance.IsPlaying())
         {
             return;
         }
+
 
         float fallSpeed =
             CatchGameManager.Instance.GetFallSpeed() * speedMultiplier;

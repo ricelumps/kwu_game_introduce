@@ -18,6 +18,10 @@ public class RunningGamePlayerController : MonoBehaviour
     [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private float jumpBufferTime = 0.1f;
 
+
+
+
+
     private Rigidbody2D rb;
     private Animator animator;
     private RigidbodyConstraints2D initialConstraints;
@@ -25,6 +29,7 @@ public class RunningGamePlayerController : MonoBehaviour
     private bool canControl = true;
     private bool isGrounded;
     private bool isJumpHolding;
+    private bool isDying;
 
     private float coyoteTimer;
     private float jumpBufferTimer;
@@ -78,6 +83,8 @@ public class RunningGamePlayerController : MonoBehaviour
                 $"Playing: {GameManager.Instance?.IsPlaying()}"
             );
         }
+
+        UpdateAnimatorPlayback();
 
         if (!CanPlay())
         {
@@ -207,12 +214,34 @@ public class RunningGamePlayerController : MonoBehaviour
         jumpHoldTimer -= Time.fixedDeltaTime;
     }
 
+
+    private void UpdateAnimatorPlayback()
+    {
+        if (animator == null)
+        {
+            return;
+        }
+
+        bool shouldAnimate =
+            isDying ||
+            (GameManager.Instance != null &&
+             GameManager.Instance.IsPlaying());
+
+        animator.speed = shouldAnimate ? 1f : 0f;
+    }
+
     private void UpdateAnimation()
     {
         if (animator == null)
         {
             return;
         }
+
+        bool isPlaying =
+            GameManager.Instance != null &&
+            GameManager.Instance.IsPlaying();
+
+        animator.speed = isPlaying ? 1f : 0f;
 
     }
 
@@ -232,7 +261,6 @@ public class RunningGamePlayerController : MonoBehaviour
         }
     }
 
-    private bool isDying;
 
     private void Die()
     {
@@ -263,6 +291,7 @@ public class RunningGamePlayerController : MonoBehaviour
 
         if (animator != null)
         {
+            animator.speed = 1f;
             animator.SetTrigger("Die");
         }
         else
