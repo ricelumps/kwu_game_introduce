@@ -133,9 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75d58e67f52d07040beb3a27c40c2cbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CatchFallingObject
-  catchScore: -100
+  catchScore: 0
   gameOverWhenMissed: 0
   speedMultiplier: 1
+  damagesPlayerWhenCaught: 1
 --- !u!61 &-2196589108202857656
 BoxCollider2D:
   m_ObjectHideFlags: 0

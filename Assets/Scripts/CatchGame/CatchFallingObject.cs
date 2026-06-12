@@ -9,6 +9,9 @@ public class CatchFallingObject : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float speedMultiplier = 1f;
 
+    [Tooltip("체크하면 획득 시 목숨을 1개 잃습니다.")]
+    [SerializeField] private bool damagesPlayerWhenCaught;
+
     private bool isHandled;
 
     private void Update()
@@ -36,7 +39,23 @@ public class CatchFallingObject : MonoBehaviour
         if (other.CompareTag("CatchZone"))
         {
             isHandled = true;
-            CatchGameManager.Instance.AddScore(catchScore);
+
+            if (damagesPlayerWhenCaught)
+            {
+                CatchGameManager.Instance.LoseLife();
+                CatchGameManager.Instance.PlayMinusCatchSound();
+            }
+            else
+            {
+                CatchGameManager.Instance.AddScore(catchScore);
+                CatchGameManager.Instance.PlayPlusCatchSound();
+
+                CatchGameManager.Instance.ShowScorePopup(
+                    catchScore,
+                    transform.position
+                );
+            }
+
             Destroy(gameObject);
             return;
         }
