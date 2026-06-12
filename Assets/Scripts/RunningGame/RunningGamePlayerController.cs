@@ -9,6 +9,11 @@ public class RunningGamePlayerController : MonoBehaviour
     [SerializeField] private float maxJumpHoldTime = 0.2f;
     [SerializeField] private float maxRiseSpeed = 13f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField, Range(0f, 1f)] private float jumpSoundVolume = 1f;
+
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.15f;
@@ -122,6 +127,45 @@ public class RunningGamePlayerController : MonoBehaviour
         return true;
     }
 
+    private bool WasJumpPressedThisFrame()
+    {
+        bool spacePressed =
+            Keyboard.current != null &&
+            Keyboard.current.spaceKey.wasPressedThisFrame;
+
+        bool mousePressed =
+            Mouse.current != null &&
+            Mouse.current.leftButton.wasPressedThisFrame;
+
+        return spacePressed || mousePressed;
+    }
+
+    private bool WasJumpReleasedThisFrame()
+    {
+        bool spaceReleased =
+            Keyboard.current != null &&
+            Keyboard.current.spaceKey.wasReleasedThisFrame;
+
+        bool mouseReleased =
+            Mouse.current != null &&
+            Mouse.current.leftButton.wasReleasedThisFrame;
+
+        return spaceReleased || mouseReleased;
+    }
+
+    private bool IsJumpHeld()
+    {
+        bool spaceHeld =
+            Keyboard.current != null &&
+            Keyboard.current.spaceKey.isPressed;
+
+        bool mouseHeld =
+            Mouse.current != null &&
+            Mouse.current.leftButton.isPressed;
+
+        return spaceHeld || mouseHeld;
+    }
+
     private void CheckGround()
     {
         isGrounded = Physics2D.OverlapCircle(
@@ -142,16 +186,7 @@ public class RunningGamePlayerController : MonoBehaviour
 
     private void ReadJumpInput()
     {
-        Keyboard keyboard = Keyboard.current;
-
-        if (keyboard == null)
-        {
-            jumpBufferTimer -= Time.deltaTime;
-            isJumpHolding = false;
-            return;
-        }
-
-        if (keyboard.spaceKey.wasPressedThisFrame)
+        if (WasJumpPressedThisFrame())
         {
             jumpBufferTimer = jumpBufferTime;
         }
@@ -160,7 +195,8 @@ public class RunningGamePlayerController : MonoBehaviour
             jumpBufferTimer -= Time.deltaTime;
         }
 
-        if (keyboard.spaceKey.wasReleasedThisFrame)
+        // Space와 마우스를 모두 놓았을 때 홀드 점프를 종료합니다.
+        if (WasJumpReleasedThisFrame() && !IsJumpHeld())
         {
             isJumpHolding = false;
         }
@@ -173,7 +209,10 @@ public class RunningGamePlayerController : MonoBehaviour
 
     private void Jump()
     {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        rb.linearVelocity = new Vector2(
+            rb.linearVelocity.x,
+            jumpForce
+        );
 
         isJumpHolding = true;
         jumpHoldTimer = maxJumpHoldTime;
@@ -181,10 +220,13 @@ public class RunningGamePlayerController : MonoBehaviour
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
 
- //       if (AudioManager.Instance != null)
- //      {
- //           AudioManager.Instance.PlayJumpSound();
- //       }
+        if (audioSource != null && jumpSound != null)
+        {
+            audioSource.PlayOneShot(
+                jumpSound,
+                jumpSoundVolume
+            );
+        }
     }
 
     private void ApplyJumpHold()
@@ -194,13 +236,7 @@ public class RunningGamePlayerController : MonoBehaviour
             return;
         }
 
-        if (Keyboard.current == null || !Keyboard.current.spaceKey.isPressed)
-        {
-            isJumpHolding = false;
-            return;
-        }
-
-        if (jumpHoldTimer <= 0f)
+        if (!IsJumpHeld() || jumpHoldTimer <= 0f)
         {
             isJumpHolding = false;
             return;
@@ -208,7 +244,10 @@ public class RunningGamePlayerController : MonoBehaviour
 
         if (rb.linearVelocity.y < maxRiseSpeed)
         {
-            rb.AddForce(Vector2.up * jumpHoldForce, ForceMode2D.Force);
+            rb.AddForce(
+                Vector2.up * jumpHoldForce,
+                ForceMode2D.Force
+            );
         }
 
         jumpHoldTimer -= Time.fixedDeltaTime;
